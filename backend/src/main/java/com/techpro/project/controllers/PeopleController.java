@@ -1,53 +1,66 @@
 package com.techpro.project.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.techpro.project.entity.People;
-import com.techpro.project.service.Servicepeople;
+import com.techpro.project.service.PeopleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/people")
+@CrossOrigin
 public class PeopleController {
+    private final PeopleService peopleService;
 
-
-    @Autowired private Servicepeople servicepeople;
-
-    @GetMapping(value = "/test_controller1/{id}", produces = "application/json")
-
-    public People test_controller(@PathVariable(value="id") int id)
-    {
-        return servicepeople.readPeople(id);
+    @Autowired
+    public PeopleController(PeopleService peopleService) {
+        this.peopleService = peopleService;
     }
 
-    @PutMapping(value = "/test_controller2/", produces = "application/json")
-    public People test_controller2(@RequestParam(required = false, value = "id", defaultValue = "") int id)
-    {
-        return servicepeople.readPeople(id);
+    @GetMapping
+    public ResponseEntity<List<People>> getAllPeople() {
+        List<People> peopleList = peopleService.getAllPeople();
+        System.out.println(peopleList);
+        return new ResponseEntity<>(peopleList, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/test_controller3/", produces = "application/json")
-    public void test_controller3(@RequestParam(required = false, value = "id", defaultValue = "") int id)
-    {
-        People save_people = new People();
-        save_people.setPersonID(1);
-        save_people.setFirstName("id");
-        save_people.setLastName("id");
-        save_people.setEmail("id");
-        servicepeople.savePeople(save_people);
+    @GetMapping("/{id}")
+    public ResponseEntity<People> getPeopleById(@PathVariable("id") Long id) {
+        Optional<People> people = peopleService.getPeopleById(id);
+        return people.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping(value = "/test_controller4/", produces = "application/json")
-    public void test_controller4(@RequestParam(required = false, value = "id", defaultValue = "") int id)
-    {
-        People save_people = new People(id,"techpro","academy","@ymca");
-        servicepeople.savePeople(save_people);
-        //return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    @PostMapping
+    public ResponseEntity<People> createPeople(@RequestBody People people) {
+        People createdPeople = peopleService.createPeople(people);
+        return new ResponseEntity<>(createdPeople, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<People> updatePeople(@PathVariable("id") Long id, @RequestBody People people) {
+        Optional<People> existingPeople = peopleService.getPeopleById(id);
+        if (existingPeople.isPresent()) {
+            People updatedPeople = peopleService.updatePeople(id, people);
+            return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePeople(@PathVariable("id") Long id) {
+        Optional<People> existingPeople = peopleService.getPeopleById(id);
+        if (existingPeople.isPresent()) {
+            peopleService.deletePeople(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

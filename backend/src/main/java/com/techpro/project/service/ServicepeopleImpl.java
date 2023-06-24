@@ -21,8 +21,7 @@ public class ServicepeopleImpl implements Servicepeople {
     @Override
     public People readPeople(int id) {
         return null;
-        
-        
+
     }
 
 

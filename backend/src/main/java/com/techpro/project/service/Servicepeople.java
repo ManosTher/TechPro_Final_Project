@@ -14,6 +14,6 @@ public interface Servicepeople {
     People savePeople(People people);
 
     // Read operation
-   People readPeople(int id);
+    People readPeople(int id);
     
 }
