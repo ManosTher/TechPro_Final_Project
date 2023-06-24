@@ -1,24 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import Home from './components/Home';
+import 'bootstrap/dist/css/bootstrap.css';
+import PeopleEdit from './components/People/PeopleEdit';
+import PeopleAdd from './components/People/PeopleAdd';
+import OrdersDetails from './components/Order/Orders/OrderDetails';
+import Order from './components/Order/Order';
+import OrderAdd from './components/Order/Orders/OrderAdd';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Hefwefewfwefwesllo <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        {/* Add your navigation links here */}
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/people">People</Link>
+            </li>
+            <li>
+              <Link to="/people/add">People Add</Link>
+            </li>
+            <li>
+              <Link to="/people/edit">People Edit</Link>
+            </li>
+            <li>
+              <Link to="/people/add">People Add</Link>
+            </li>
+            <li>
+              <Link to="/order/add">Order Add</Link>
+            </li>
+            <li>
+              <Link to="/orders/person">Person Orders</Link>
+            </li>
+
+
+          </ul>
+        </nav>
+        {/* Add your routes here */}
+        <Routes>
+          <Route path="/" element={<Home />} />          
+          <Route path="/people/add" element={<PeopleAdd />} />
+          <Route path="/people/edit/:personID" element={<PeopleEdit />} />
+          <Route path="/order/add/:personID" element={<OrderAdd />} />
+          <Route path="/orders/person/:personID" element={<Order />} />
+          <Route path="/orders/ordersdetails/:orderId" element={<OrdersDetails />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
