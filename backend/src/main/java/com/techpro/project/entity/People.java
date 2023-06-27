@@ -3,6 +3,7 @@ package com.techpro.project.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "people")
@@ -23,6 +24,8 @@ public class People {
 
     @Column(name = "Email")
     private String email;
+
+
 
     public Long getPersonID() {
         return personID;

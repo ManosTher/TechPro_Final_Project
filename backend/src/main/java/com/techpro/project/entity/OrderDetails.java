@@ -20,7 +20,6 @@ public class OrderDetails {
     @Column(name = "Quantity")
     private Integer quantity;
 
-
     public Order getOrderId() {
         return orderId;
     }
@@ -37,13 +36,6 @@ public class OrderDetails {
         this.orderDetailsId = orderDetailsId;
     }
 
-    public Order getOrder() {
-        return orderId;
-    }
-
-    public void setOrder(Order order) {
-        this.orderId = order;
-    }
 
     public Item getItem() {
         return item;

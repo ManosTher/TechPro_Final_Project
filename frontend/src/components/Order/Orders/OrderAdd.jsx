@@ -1,11 +1,10 @@
-import React, { useState , useParams ,useEffect} from 'react';
+import React, { useState , useEffect } from 'react';
 
 
-const AddOrder = ({ personId,fetchOrders,closePopup }) => {
+const AddOrder = ({ orderId , OrderDetailsByOrderId , closePopup }) => {
   const [itemName, setItemName] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [person, setPerson] = useState(null);
-   console.log(personId);
+   console.log(orderId);
 
   const handleItemNameChange = (event) => {
     setItemName(event.target.value);
@@ -15,39 +14,22 @@ const AddOrder = ({ personId,fetchOrders,closePopup }) => {
     setQuantity(event.target.value);
   };
 
-  const createOrder = async () => {
+  const fetchOrder = async (orderId) => {
     try {
-      // Fetch person details by personId from the API
-      const response = await fetch(`http://localhost:8080/people/${personId}`);
-      const personData = await response.json();
-      console.log(personData);
-  
-      const order = {
-        person: {
-          personID: personData.personID,
-          firstName: personData.firstName,
-          lastName: personData.lastName,
-          email: personData.email
-        },
-        orderDate: new Date().toISOString().split('T')[0] // Set the current date as the order date
-      };
-      
-      const responsepost = await fetch(`http://localhost:8080/orders/person/${personId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(order)
-      });
-  
-      const createdOrder = await responsepost.json();
-      console.log(createdOrder);
-      return createdOrder;
+      const response = await fetch(`http://localhost:8080/orders/${orderId}`);
+      if (response.ok) {
+        const orderData = await response.json();
+        console.log(orderData);
+        return orderData;
+      } else {
+        console.error('Error fetching order:', response.status);
+      }
     } catch (error) {
-      console.error('Error creating order:', error);
+      console.error('Error fetching order:', error);
     }
-
   };
+
+  
   
   const createItem = async () => {
     try {
@@ -71,17 +53,17 @@ const AddOrder = ({ personId,fetchOrders,closePopup }) => {
     }
   };
 
-  const updateOrderWithItem = async (orderId, itemId, quantity) => {
+  const updateOrderWithItem = async (orderData, itemId, quantity) => {
     const item = {
       item: {
         itemID: itemId
       },
       quantity: parseInt(quantity),
-      order: {
-        orderId: orderId
-      }
+      orderId: orderData
     };
   
+    console.log(updateOrderWithItem);
+
     const response = await fetch(`http://localhost:8080/orderdetails/`, {
       method: 'POST',
       headers: {
@@ -89,37 +71,37 @@ const AddOrder = ({ personId,fetchOrders,closePopup }) => {
       },
       body: JSON.stringify(item)
     });
-  
+
     const updatedOrder = await response.json();
     console.log(updatedOrder);
     return updatedOrder;
+    
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
-      // Step 1: Create the order object
-      const createdOrder = await createOrder();
+
+      const orderData = await fetchOrder(orderId);
+
       // Step 2: Create the item object
       const createdItem = await createItem();
 
-
       // Step 3: Update the order object with the item details
       const updatedOrder = await updateOrderWithItem(
-        createdOrder.orderId,
+        orderData,
         createdItem.itemID,
         quantity
       );
 
       console.log('Order created:', updatedOrder);
-      
-      fetchOrders();
+      OrderDetailsByOrderId();
       closePopup();
     } catch (error) {
       console.error('Error creating order:', error);
     }    
   };
+  
   
   
   return (

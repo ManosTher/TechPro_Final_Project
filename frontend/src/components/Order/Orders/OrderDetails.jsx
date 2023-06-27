@@ -1,87 +1,121 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
+import { Link, useParams, useNavigate } from 'react-router-dom';import 'react-toastify/dist/ReactToastify.css';
+import AddOrder from "../Orders/OrderAdd";
+import OrderDetailsEdit from "../Orders/OrderDetailsEdit";
 
 const OrderDetails = () => {
-    const [orddt, setOrddt] = useState([]);
-    const { orderId } = useParams();
-    const [showAddOrder, setShowAddOrder] = useState(false);
-    console.log(orderId);
-  
-    useEffect(() => {
-      loadOrddt();
-      console.log()
-    }, [orderId]);
-  
-    const loadOrddt = async () => {
-        try {
-          const response = await fetch(`http://localhost:8080/orderdetails/order/${orderId}`);
-          if (response.ok) {
-            const data = await response.json();
+  const [orddt, setOrddt] = useState([]);
+  const [showAddOrder, setShowAddOrder] = useState(false);
+  const [showEditOrder, setShowEditOrder] = useState(false);
+  const [editOrderDetailsId, setEditOrderDetailsId] = useState(null);
 
-            setOrddt(data);
-          } else {
-            console.error('Error loading order details:', response.status);
-          }
-        } catch (error) {
-          console.error('Error loading order details:', error);
-        }
-      };
+  const { orderId } = useParams();
+  const navigate = useNavigate();
+  console.log(orderId);
+
+  const OrderDetailsByOrderId = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/orderdetails/order/${orderId}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setOrddt(data);
+      } else {
+        console.error('Error fetching order details:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+    }
+  };
+
+  useEffect(() => {
+    OrderDetailsByOrderId();
+  }, [orderId]);
+
+  const deleteOrrt = async (orderDetailsId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/orderdetails/${orderDetailsId}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        OrderDetailsByOrderId();
+      } else {
+        console.error('Error deleting OrderDetails:', response.status);
+      }
+    } catch (error) {
+      console.error('Error deleting OrderDetails:', error);
+    }
+  };
+
+  const handleAddOrderClick = async () => {
+    setShowAddOrder(!showAddOrder);
+
+    if (!showAddOrder) {
+      // Fetch the updated order list after closing the popup
+      await OrderDetailsByOrderId();
+    }
+  };
+
+  const handleEditOrderClick = (orderDetailsId) => {
+    setEditOrderDetailsId(orderDetailsId);
+    setShowEditOrder(true);
+  };
+
+  const handleEditOrderDetailsClose = () => {
+    setShowEditOrder(false);
+    setEditOrderDetailsId(null);
+    // Fetch the updated order list after closing the edit popup
+    OrderDetailsByOrderId();
+  };
+
   
-      const deleteOrrt = async (orderDetailsId) => {
-        try {
-          const response = await fetch(`http://localhost:8080//orderdetails/delete-by-order-id/${orderDetailsId}`, {
-            method: 'DELETE'
-          });
-          if (response.ok) {
-            loadOrddt();
-          } else {
-            console.error('Error deleting OrderDetails:', response.status);
-          }
-        } catch (error) {
-          console.error('Error deleting OrderDetails:', error);
-        }
-      };
-  
- 
-    console.log(orddt);
-    
-   
-        
-    return (
-        <div className="container">
-        <div className="py-4">                    
-          <table className="table border shadow">
-            <thead className="thead-light">
-              <tr>
-                <th scope="col">A/A</th>
-                <th scope="col">Date Order</th>
-                <th scope="col">Item</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+
+  return (
+    <div className="container">
+      <div className="py-4">
+        <button className="btn btn-outline-primary" onClick={handleAddOrderClick}>
+          Add Order
+        </button>
+        {showAddOrder && <AddOrder orderId={orderId} OrderDetailsByOrderId={OrderDetailsByOrderId} closePopup={handleAddOrderClick} />}
+
+        {showEditOrder && (
+          <OrderDetailsEdit orderDetailsId={editOrderDetailsId} loadOrderDetails={OrderDetailsByOrderId} onClose={handleEditOrderDetailsClose} />
+        )}
+
+        <table className="table border shadow">
+          <thead className="thead-light">
+            <tr>
+              <th scope="col">A/A</th>
+              <th scope="col">Date Order</th>
+              <th scope="col">Item</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
             {orddt.map((item, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{item.order.orderDate}</td>
+                <td>{item.orderId.orderDate}</td>
                 <td>{item.item.itemName}</td>
                 <td>{item.quantity}</td>
                 <td>
-                    <button className="btn btn-danger mx-3" onClick={() => deleteOrrt(item.orderDetailsId)}>
-                        Delete
+                  <div>
+                    <button className="btn btn-primary mx-3" onClick={() => handleEditOrderClick(item.orderDetailsId)}>
+                      Edit
                     </button>
+                    <button className="btn btn-danger" onClick={() => deleteOrrt(item.orderDetailsId)}>
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
-            ))} 
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
-      
-
-    )
+    </div>
+  );
 };
 
 export default OrderDetails;

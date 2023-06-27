@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import AddOrder from './Orders/OrderAdd';
+
 
 
 const OrderList = ({personId}) => {
@@ -8,9 +8,11 @@ const OrderList = ({personId}) => {
   const Id = useParams();
   console.log(Id.personID);
   const { personID } = useParams();
-  const [showAddOrder, setShowAddOrder] = useState(false);
   
-  
+  useEffect(() => {
+    fetchOrders();
+  }, [personId]);
+
   const fetchOrders = async () => {
     try {
       const response = await fetch(`http://localhost:8080/orders/person/${personID}/orders`);
@@ -26,9 +28,40 @@ const OrderList = ({personId}) => {
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, [personId]);
+  const createOrder = async () => {
+    try {
+
+      const response = await fetch(`http://localhost:8080/people/${personID}`);
+      const orderData = await response.json();
+      console.log(orderData);
+  
+      const order = {
+        person: {
+          personID: orderData.personID,
+          firstName: orderData.firstName,
+          lastName: orderData.lastName,
+          email: orderData.email
+        },
+        orderDate: new Date().toISOString().split('T')[0] // Set the current date as the order date
+      };
+      console.log(order);
+      const responsepost = await fetch(`http://localhost:8080/orders/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(order)
+      });
+  
+      const createdOrder = await responsepost.json();
+      console.log(createdOrder);
+      return createdOrder;
+    } catch (error) {
+      console.error('Error creating order:', error);
+    }
+  };
+
+
 
   const deleteOrder = async (orderId) => {
     try {
@@ -45,9 +78,10 @@ const OrderList = ({personId}) => {
       const response = await fetch(`http://localhost:8080/orders/${orderId}`, {
         method: 'DELETE'
       });
+      
       if (response.ok) {
-        // Refresh the order list after successful deletion
-        fetchOrders();
+        // Manually update the orders state after successful deletion
+        setOrders(prevOrders => prevOrders.filter(order => order.orderId !== orderId));
       } else {
         console.error('Error deleting order:', response.status);
       }
@@ -56,15 +90,13 @@ const OrderList = ({personId}) => {
     }
   };
 
+  const handleAddOrderClick = async () => {
+    // Call the createOrder function to create a new order
+    await createOrder();
 
-    const handleAddOrderClick = async () => {
-      setShowAddOrder(!showAddOrder);
-    
-      if (!showAddOrder) {
-        // Fetch the updated order list after closing the popup
-        await fetchOrders();
-      }
-    };
+    // Fetch the updated order list
+    fetchOrders();
+  }; 
 
   
 
@@ -73,8 +105,7 @@ const OrderList = ({personId}) => {
       <div className="py-4">
         <button className="btn btn-outline-primary" onClick={handleAddOrderClick}>
           Add Order
-        </button>
-        {showAddOrder && <AddOrder personId={Id.personID} fetchOrders={fetchOrders} closePopup={handleAddOrderClick}/>}
+        </button>       
 
 
         <div>

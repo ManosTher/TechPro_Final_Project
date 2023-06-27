@@ -15,31 +15,7 @@ function App() {
       <div>
         {/* Add your navigation links here */}
         <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/people">People</Link>
-            </li>
-            <li>
-              <Link to="/people/add">People Add</Link>
-            </li>
-            <li>
-              <Link to="/people/edit">People Edit</Link>
-            </li>
-            <li>
-              <Link to="/people/add">People Add</Link>
-            </li>
-            <li>
-              <Link to="/order/add">Order Add</Link>
-            </li>
-            <li>
-              <Link to="/orders/person">Person Orders</Link>
-            </li>
-
-
-          </ul>
+              <Link to="/" className="btn btn-primary">Home</Link>           
         </nav>
         {/* Add your routes here */}
         <Routes>

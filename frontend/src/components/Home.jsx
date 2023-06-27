@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
+import './Home.css'
+import { Link , navigate } from 'react-router-dom';
+
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const Home = () => {
   const [people, setUsers] = useState([]);
@@ -12,27 +14,39 @@ const Home = () => {
 
   const loadUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/people");
-      setUsers(response.data);
-      console.log(response)
+      const response = await fetch("http://localhost:8080/people");
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+        console.log(data);
+      } else {
+        console.error('Error loading users:', response.status);
+      }
     } catch (error) {
       console.error('Error loading users:', error);
     }
   };
-
+  
   const deleteUser = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/people/${id}`);
-      loadUsers();
+      const response = await fetch(`http://localhost:8080/people/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        loadUsers();
+      } else {
+        console.error('Error deleting user:', response.status);
+      }
     } catch (error) {
       console.error('Error deleting user:', error);
     }
   };
+  
 
   return (
     <div className="container">
       <div className="py-4">
-        <Link className="btn btn-outline-light" to="/people/add"><button>Add User</button></Link>
+      <Link to="/people/add" className="btn btn-primary">Add User</Link>     
         <table className="table border shadow">
           <thead className="thead-light">
             <tr>
