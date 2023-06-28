@@ -17,22 +17,28 @@ public class PeopleService {
         this.peopleRepository = peopleRepository;
     }
 
+    // Retrieve all people
     public List<People> getAllPeople() {
         return peopleRepository.findAll();
     }
 
-    public Optional<People> getPeopleById(Long personId) { return peopleRepository.findById(personId);
+    // Retrieve a specific person by ID
+    public Optional<People> getPeopleById(Long personId) {
+        return peopleRepository.findById(personId);
     }
 
+    // Create a new person
     public People createPeople(People people) {
         return peopleRepository.save(people);
     }
 
+    // Update an existing person
     public People updatePeople(Long id, People people) {
         people.setPersonID(id);
         return peopleRepository.save(people);
     }
 
+    // Delete a person by ID
     public void deletePeople(Long id) {
         peopleRepository.deleteById(id);
     }

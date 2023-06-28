@@ -26,6 +26,7 @@ public class People {
     private String email;
 
 
+    // Getters and setters
 
     public Long getPersonID() {
         return personID;

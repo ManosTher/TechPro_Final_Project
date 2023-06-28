@@ -23,12 +23,14 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<List<Item>> getAllItems() {
+        // Get all items from the item service
         List<Item> itemList = itemService.getAllItems();
         return new ResponseEntity<>(itemList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable("id") Long id) {
+        // Get an item by its ID from the item service
         Optional<Item> item = itemService.getItemById(id);
         return item.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -36,12 +38,14 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Item> createItem(@RequestBody Item item) {
+        // Create a new item using the provided item data
         Item createdItem = itemService.createItem(item);
         return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable("id") Long id, @RequestBody Item item) {
+        // Update an existing item with the provided item data
         Optional<Item> existingItem = itemService.getItemById(id);
         if (existingItem.isPresent()) {
             Item updatedItem = itemService.updateItem(id, item);
@@ -53,6 +57,7 @@ public class ItemController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable("id") Long id) {
+        // Delete an item by its ID
         Optional<Item> existingItem = itemService.getItemById(id);
         if (existingItem.isPresent()) {
             itemService.deleteItem(id);

@@ -19,6 +19,7 @@ public class Order {
     @Column(name = "OrderDate", nullable = false)
     private Date orderDate;
 
+    // Getters and setters
 
     public Long getOrderId() {
         return orderId;

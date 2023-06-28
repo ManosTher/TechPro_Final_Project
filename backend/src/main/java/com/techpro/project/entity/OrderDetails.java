@@ -17,6 +17,8 @@ public class OrderDetails {
     @JoinColumn(name = "ItemID", nullable = false)
     private Item item;
 
+    // Getters and setters
+
     @Column(name = "Quantity")
     private Integer quantity;
 

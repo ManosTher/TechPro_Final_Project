@@ -18,6 +18,8 @@ public class Item {
     @Column(name = "Name", nullable = false)
     private String itemName;
 
+    // Getters and setters
+
     public Long getItemID() {
         return itemID;
     }

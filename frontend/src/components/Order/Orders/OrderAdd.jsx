@@ -1,19 +1,20 @@
 import React, { useState , useEffect } from 'react';
 
-
 const AddOrder = ({ orderId , OrderDetailsByOrderId , closePopup }) => {
   const [itemName, setItemName] = useState('');
   const [quantity, setQuantity] = useState('');
-   console.log(orderId);
 
+  // Handle change event for item name input
   const handleItemNameChange = (event) => {
     setItemName(event.target.value);
   };
 
+  // Handle change event for quantity input
   const handleQuantityChange = (event) => {
     setQuantity(event.target.value);
   };
 
+  // Fetch order details by ID from the server
   const fetchOrder = async (orderId) => {
     try {
       const response = await fetch(`http://localhost:8080/orders/${orderId}`);
@@ -29,8 +30,7 @@ const AddOrder = ({ orderId , OrderDetailsByOrderId , closePopup }) => {
     }
   };
 
-  
-  
+  // Create a new item
   const createItem = async () => {
     try {
       const item = {
@@ -53,6 +53,7 @@ const AddOrder = ({ orderId , OrderDetailsByOrderId , closePopup }) => {
     }
   };
 
+  // Update the order with the item details
   const updateOrderWithItem = async (orderData, itemId, quantity) => {
     const item = {
       item: {
@@ -75,13 +76,13 @@ const AddOrder = ({ orderId , OrderDetailsByOrderId , closePopup }) => {
     const updatedOrder = await response.json();
     console.log(updatedOrder);
     return updatedOrder;
-    
   };
 
+  // Handle form submit event
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-
+      // Step 1: Fetch the order details
       const orderData = await fetchOrder(orderId);
 
       // Step 2: Create the item object
@@ -101,8 +102,6 @@ const AddOrder = ({ orderId , OrderDetailsByOrderId , closePopup }) => {
       console.error('Error creating order:', error);
     }    
   };
-  
-  
   
   return (
     <div className="container">

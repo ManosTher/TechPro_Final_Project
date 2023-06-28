@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';import 'react-toastify/dist/ReactToastify.css';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 import AddOrder from "../Orders/OrderAdd";
 import OrderDetailsEdit from "../Orders/OrderDetailsEdit";
 
@@ -13,6 +14,7 @@ const OrderDetails = () => {
   const navigate = useNavigate();
   console.log(orderId);
 
+  // Fetch order details by order ID from the server
   const OrderDetailsByOrderId = async () => {
     try {
       const response = await fetch(`http://localhost:8080/orderdetails/order/${orderId}`);
@@ -32,6 +34,7 @@ const OrderDetails = () => {
     OrderDetailsByOrderId();
   }, [orderId]);
 
+  // Delete order details by ID
   const deleteOrrt = async (orderDetailsId) => {
     try {
       const response = await fetch(`http://localhost:8080/orderdetails/${orderDetailsId}`, {
@@ -47,6 +50,7 @@ const OrderDetails = () => {
     }
   };
 
+  // Handle click event for adding an order
   const handleAddOrderClick = async () => {
     setShowAddOrder(!showAddOrder);
 
@@ -56,11 +60,13 @@ const OrderDetails = () => {
     }
   };
 
+  // Handle click event for editing an order
   const handleEditOrderClick = (orderDetailsId) => {
     setEditOrderDetailsId(orderDetailsId);
     setShowEditOrder(true);
   };
 
+  // Handle close event for editing an order
   const handleEditOrderDetailsClose = () => {
     setShowEditOrder(false);
     setEditOrderDetailsId(null);
@@ -68,13 +74,11 @@ const OrderDetails = () => {
     OrderDetailsByOrderId();
   };
 
-  
-
   return (
     <div className="container">
       <div className="py-4">
         <button className="btn btn-outline-primary" onClick={handleAddOrderClick}>
-          Add Order
+          Add Item
         </button>
         {showAddOrder && <AddOrder orderId={orderId} OrderDetailsByOrderId={OrderDetailsByOrderId} closePopup={handleAddOrderClick} />}
 
@@ -86,7 +90,7 @@ const OrderDetails = () => {
           <thead className="thead-light">
             <tr>
               <th scope="col">A/A</th>
-              <th scope="col">Date Order</th>
+              <th scope="col">Date</th>
               <th scope="col">Item</th>
               <th scope="col">Quantity</th>
               <th scope="col">Actions</th>

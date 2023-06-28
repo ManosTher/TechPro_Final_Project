@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css'
-import { Link , navigate } from 'react-router-dom';
-
+import { Link, navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 const Home = () => {
   const [people, setUsers] = useState([]);
@@ -17,7 +15,7 @@ const Home = () => {
       const response = await fetch("http://localhost:8080/people");
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        setUsers(data); // Set the retrieved users data in the state
         console.log(data);
       } else {
         console.error('Error loading users:', response.status);
@@ -33,7 +31,7 @@ const Home = () => {
         method: 'DELETE'
       });
       if (response.ok) {
-        loadUsers();
+        loadUsers(); // Reload the users after deleting a user
       } else {
         console.error('Error deleting user:', response.status);
       }
@@ -46,7 +44,7 @@ const Home = () => {
   return (
     <div className="container">
       <div className="py-4">
-      <Link to="/people/add" className="btn btn-primary">Add User</Link>     
+        <Link to="/people/add" className="btn btn-primary">Add User</Link>
         <table className="table border shadow">
           <thead className="thead-light">
             <tr>

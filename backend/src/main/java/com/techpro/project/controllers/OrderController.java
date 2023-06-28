@@ -27,12 +27,14 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
+        // Get all orders from the order service
         List<Order> orderList = orderService.getAllOrders();
         return new ResponseEntity<>(orderList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable("id") Long id) {
+        // Get an order by its ID from the order service
         Optional<Order> order = orderService.getOrderById(id);
         return order.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -40,6 +42,7 @@ public class OrderController {
 
     @GetMapping("/person/{id}/orders")
     public ResponseEntity<List<Order>> getOrdersByPersonId(@PathVariable("id") Long personId) {
+        // Get orders associated with a specific person ID
         List<Order> orders = orderService.getOrdersByPersonId(personId);
         if (!orders.isEmpty()) {
             return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -50,6 +53,7 @@ public class OrderController {
 
     @PostMapping("/person/{id}")
     public ResponseEntity<Order> createOrderForPerson(@PathVariable("id") Long personId, @RequestBody Order order) {
+        // Create an order for a specific person
         Optional<People> optionalPerson = peopleService.getPeopleById(personId);
 
         if (optionalPerson.isPresent()) {
@@ -61,8 +65,10 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+        // Create a new order
         Long personId = order.getPerson().getPersonID();
         Optional<People> optionalPerson = peopleService.getPeopleById(personId);
 
@@ -77,6 +83,7 @@ public class OrderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable("id") Long id, @RequestBody Order order) {
+        // Update an existing order with the provided order data
         Optional<Order> existingOrder = orderService.getOrderById(id);
         if (existingOrder.isPresent()) {
             Order updatedOrder = orderService.updateOrder(id, order);
@@ -88,6 +95,7 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable("id") Long id) {
+        // Delete an order by its ID
         Optional<Order> existingOrder = orderService.getOrderById(id);
         if (existingOrder.isPresent()) {
             orderService.deleteOrder(id);

@@ -1,48 +1,44 @@
+version: '3.8'
+
 services:
-
-  backend:
-    build: backend
-    restart: always
-    ports:
-     - "8090:8080"
-    networks:
-      - react-spring
-      - spring-mysql
-  
-  db:
-    image: mysql:latest
-    environment:
-      - MYSQL_DATABASE=final_project
-      - MYSQL_ROOT_PASSWORD=root
-    restart: always
-    ports:
-      - '3306:3306'
-    volumes:
-      - ./db/final_project_db.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - spring-mysql
-
   frontend:
     build:
-      context: frontend
-      target: development
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
-    volumes:
-      - ./frontend/src:/code/src
-      - /project/node_modules
-    networks:
-      - react-spring
     depends_on:
       - backend
-    expose:
-      - 3306
-      - 33060
+    networks:
+      - mynetwork
 
-volumes:
+  backend:    
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - mynetwork
+    
+
   db:
-    driver: local
+    container_name: db
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: final_project_db
+      MYSQL_ROOT_PASSWORD: user
+      
+    volumes:
+      - ./db/final_project_db.sql:/docker-entrypoint-initdb.d/final_project_db.sql
+    networks:
+      - mynetwork
 
 networks:
-  react-spring: {}
-  spring-mysql: {}
+  mynetwork:
+    driver: bridge

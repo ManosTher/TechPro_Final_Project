@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-
-
-const OrderList = ({personId}) => {
+const OrderList = ({ personId }) => {
   const [orders, setOrders] = useState([]);
   const Id = useParams();
   console.log(Id.personID);
   const { personID } = useParams();
-  
+
   useEffect(() => {
     fetchOrders();
   }, [personId]);
 
+  // Function to fetch orders for a specific person
   const fetchOrders = async () => {
     try {
       const response = await fetch(`http://localhost:8080/orders/person/${personID}/orders`);
@@ -28,13 +27,13 @@ const OrderList = ({personId}) => {
     }
   };
 
+  // Function to create a new order
   const createOrder = async () => {
     try {
-
       const response = await fetch(`http://localhost:8080/people/${personID}`);
       const orderData = await response.json();
       console.log(orderData);
-  
+
       const order = {
         person: {
           personID: orderData.personID,
@@ -42,9 +41,10 @@ const OrderList = ({personId}) => {
           lastName: orderData.lastName,
           email: orderData.email
         },
-        orderDate: new Date().toISOString().split('T')[0] // Set the current date as the order date
+        orderDate: new Date().toISOString() // Set the current date and time as the order date
       };
       console.log(order);
+
       const responsepost = await fetch(`http://localhost:8080/orders/`, {
         method: 'POST',
         headers: {
@@ -52,7 +52,7 @@ const OrderList = ({personId}) => {
         },
         body: JSON.stringify(order)
       });
-  
+
       const createdOrder = await responsepost.json();
       console.log(createdOrder);
       return createdOrder;
@@ -61,24 +61,22 @@ const OrderList = ({personId}) => {
     }
   };
 
-
-
+  // Function to delete an order
   const deleteOrder = async (orderId) => {
     try {
-      
       const deleteOrderDetailsResponse = await fetch(`http://localhost:8080/orderdetails/delete-by-order-id/${orderId}`, {
-      method: 'DELETE'
-    });
-    if (!deleteOrderDetailsResponse.ok) {
-      console.error('Error deleting order details:', deleteOrderDetailsResponse.status);
-      return;
-    }
+        method: 'DELETE'
+      });
 
-      
+      if (!deleteOrderDetailsResponse.ok) {
+        console.error('Error deleting order details:', deleteOrderDetailsResponse.status);
+        return;
+      }
+
       const response = await fetch(`http://localhost:8080/orders/${orderId}`, {
         method: 'DELETE'
       });
-      
+
       if (response.ok) {
         // Manually update the orders state after successful deletion
         setOrders(prevOrders => prevOrders.filter(order => order.orderId !== orderId));
@@ -90,23 +88,21 @@ const OrderList = ({personId}) => {
     }
   };
 
+  // Function to handle the "Add Order" button click
   const handleAddOrderClick = async () => {
     // Call the createOrder function to create a new order
     await createOrder();
 
     // Fetch the updated order list
     fetchOrders();
-  }; 
-
-  
+  };
 
   return (
     <div className="container">
       <div className="py-4">
         <button className="btn btn-outline-primary" onClick={handleAddOrderClick}>
           Add Order
-        </button>       
-
+        </button>
 
         <div>
           <h2>Order List</h2>
@@ -115,12 +111,11 @@ const OrderList = ({personId}) => {
               <li key={order.orderId}>
                 <span>{order.orderDate}</span>
                 <Link className="btn btn-outline-primary mx-3" to={`/orders/ordersdetails/${order.orderId}`}>
-                  Orders
+                  Items
                 </Link>
                 <button className="btn btn-danger" onClick={() => deleteOrder(order.orderId)}>
-      Delete
-    </button>
-                
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

@@ -39,24 +39,24 @@ const OrderDetailsEdit = ({ orderDetailsId, orderId, loadOrderDetails, onClose }
 
   const updateOrderDetails = async () => {
     try {
-        const orderDetails = {
-            item: {
-                itemID : itemID,
-                itemName: itemName
-            },
-            orderDetailsId: orderDetailsId,
-            orderId: {
-              orderId: order.orderId,
-              orderDate: order.orderDate,
-              person: {
-                email: order.person.email,
-                firstName: order.person.firstName,
-                lastName: order.person.lastName,
-                personID: order.person.personID
-              }
-            },
-            quantity: parseInt(quantity)
-          };
+      const orderDetails = {
+        item: {
+          itemID: itemID,
+          itemName: itemName
+        },
+        orderDetailsId: orderDetailsId,
+        orderId: {
+          orderId: order.orderId,
+          orderDate: order.orderDate,
+          person: {
+            email: order.person.email,
+            firstName: order.person.firstName,
+            lastName: order.person.lastName,
+            personID: order.person.personID
+          }
+        },
+        quantity: parseInt(quantity)
+      };
 
       const response = await fetch(`http://localhost:8080/orderdetails/${orderDetailsId}`, {
         method: 'PUT',

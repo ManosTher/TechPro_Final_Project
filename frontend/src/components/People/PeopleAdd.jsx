@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,33 +12,29 @@ export default function () {
         firstName:"",
         lastName:"",
         email:"",
-   
     });
-    const{firstName,lastName,address,zipCode,phoneNumber,email,city, state}=people;
-    // function which add the values to people Object
+    const {firstName,lastName,address,zipCode,phoneNumber,email,city, state} = people;
+
+    // Function to handle input change
     const onInputChange=(e)=>{
         setPeople({...people,[e.target.name]: e.target.value});
     };
 
-
+    // Function to handle form submission
     const onSubmit = async (e)=>{
         e.preventDefault();
         try {
-            let ppl = people;
             for(let attr in people) {
                 if(people[attr] === "") {
                     toast(`A field is empty, Please populate all of them`);
                     return;
                 }
             }
-            await axios.post("http://localhost:8080/people",people)
-            navigate("/")
-
+            await axios.post("http://localhost:8080/people",people); // Submit the form data to the server
+            navigate("/");
         } catch (e){
             toast(e.response.data.error);
         }
-        
-
     };
 
   return (
@@ -84,7 +80,6 @@ export default function () {
                     onChange={(e)=>onInputChange(e)}/>
                 </div>
                 
-            
                 <button type="submit" className="btn btn-outline-primary">
                     Submit
                 </button>
@@ -94,7 +89,6 @@ export default function () {
                 </form>
             </div>
         </div>
-
     </div>
   )
 }

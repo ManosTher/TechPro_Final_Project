@@ -17,23 +17,28 @@ public class ItemService {
         this.itemRepository = itemRepository;
     }
 
+    // Retrieve all items
     public List<Item> getAllItems() {
         return itemRepository.findAll();
     }
 
+    // Retrieve item by ID
     public Optional<Item> getItemById(Long id) {
         return itemRepository.findById(id);
     }
 
+    // Create a new item
     public Item createItem(Item item) {
         return itemRepository.save(item);
     }
 
+    // Update an existing item
     public Item updateItem(Long id, Item item) {
         item.setItemID(id);
         return itemRepository.save(item);
     }
 
+    // Delete an item
     public void deleteItem(Long id) {
         itemRepository.deleteById(id);
     }
