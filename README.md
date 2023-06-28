@@ -23,7 +23,7 @@ You have two options to build and initiate the Docker containers:
 
 - In the `/Tech_Pro_Final_Project` directory, run the following command:
 
-docker-compose up -d --build
+docker compose up -d --build
 
 
 
