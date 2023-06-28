@@ -9,7 +9,6 @@ Before running the Docker command, you need to install the dependencies for Node
 
 npm install
 
-markdown
 
 
 ### 2. Backend Setup:
@@ -26,7 +25,6 @@ You have two options to build and initiate the Docker containers:
 
 docker-compose up -d --build
 
-bash
 
 
 #### Option 2: Using the `boot_system.sh` Script
@@ -35,13 +33,11 @@ bash
 
 ./boot_system.sh
 
-arduino
 
 - If you encounter an error running the `boot_system.sh` script, run the following command first:
 
 chmod +x boot_system.sh
 
-sql
 
 
 **Important Note:**
